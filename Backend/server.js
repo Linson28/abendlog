@@ -28,7 +28,9 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Security headers
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false
+}));
 
 // Login-specific rate limiter - 10 requests per 15 minutes per IP
 const loginLimiter = rateLimit({
