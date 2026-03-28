@@ -1,0 +1,5 @@
+{
+  "name": "Abend Log",
+  "description": "A web application to track, analyze, and resolve system abends efficiently. Users can add new abend logs, search through existing logs with powerful filters, and view detailed analysis of each incident.",
+  "requestFramePermissions": []
+}

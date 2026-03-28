@@ -1,0 +1,70 @@
+# --- Logs ---
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# --- Environment files (keep an example) ---
+
+
+# --- Node dependencies ---
+node_modules/
+
+# --- Vite / Frontend build output ---
+dist/
+dist-ssr/
+.vite/
+
+# --- Backend build output (if you transpile/bundle) ---
+build/
+server/build/
+server/dist/
+backend/build/
+backend/dist/
+
+# --- Temporary / cache directories ---
+.tmp/
+tmp/
+temp/
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# --- TypeScript ---
+*.tsbuildinfo
+
+# --- Coverage ---
+coverage/
+.nyc_output/
+
+# --- OS files ---
+.DS_Store
+Thumbs.db
+
+# --- Editors/IDEs ---
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.iml
+
+# --- Misc tools ---
+.turbo/
+.sourcemaps/
+*.sw?
+*.swp
+*.swo
+.node_repl_history
+
+# --- Local config snippets ---
+*.local
