@@ -28,8 +28,8 @@ const AppContent: React.FC = () => {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
         <Route element={<AppLayoutWithSidebar />}>
+          <Route path="/" element={<HomePage />} />
           <Route path="add" element={<AddLogPage />} />
           <Route path="edit/:year/:log_number" element={<AddLogPage />} />
           <Route path="search" element={<SearchPage />} />
