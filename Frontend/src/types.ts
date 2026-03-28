@@ -38,10 +38,12 @@ export interface PaginatedLogResponse {
   totalCount: number;
 }
 
-export enum UserRole {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
-}
+export const UserRole = {
+  ADMIN: 'ADMIN',
+  USER: 'USER'
+} as const;
+
+export type UserRole = typeof UserRole[keyof typeof UserRole];
 
 export interface User {
   user_id: string;

@@ -25,6 +25,28 @@ const getStrength = (pw: string): number => {
 const strengthLabel = ['Too weak', 'Weak', 'Fair', 'Good', 'Strong'];
 const strengthColor = ['bg-red-400', 'bg-red-400', 'bg-amber-400', 'bg-blue-400', 'bg-green-500'];
 
+const PwInput: React.FC<{
+  id: string; value: string; onChange: (v: string) => void;
+  showPw: boolean; onToggle: () => void; placeholder: string; autoComplete: string;
+}> = ({ id, value, onChange, showPw, onToggle, placeholder, autoComplete }) => (
+  <div className="relative">
+    <input
+      id={id}
+      type={showPw ? 'text' : 'password'}
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      required
+      autoComplete={autoComplete}
+      placeholder={placeholder}
+      className="w-full px-4 py-3 pr-12 rounded-xl border-2 border-slate-200 focus:outline-none focus:border-indigo-400 transition-colors text-slate-900 placeholder-slate-400"
+    />
+    <button type="button" onClick={onToggle}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+      <EyeIcon visible={showPw} />
+    </button>
+  </div>
+);
+
 const PasswordResetPage: React.FC = () => {
   const { session, clearMustResetPw, logout } = useAuth();
   const [currentPw, setCurrentPw] = useState('');
@@ -56,30 +78,6 @@ const PasswordResetPage: React.FC = () => {
 
   const toggle = (field: 'current' | 'new' | 'confirm') =>
     setShow(s => ({ ...s, [field]: !s[field] }));
-
-  const PwInput = ({
-    id, value, onChange, showPw, onToggle, placeholder, autoComplete
-  }: {
-    id: string; value: string; onChange: (v: string) => void;
-    showPw: boolean; onToggle: () => void; placeholder: string; autoComplete: string;
-  }) => (
-    <div className="relative">
-      <input
-        id={id}
-        type={showPw ? 'text' : 'password'}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        required
-        autoComplete={autoComplete}
-        placeholder={placeholder}
-        className="w-full px-4 py-3 pr-12 rounded-xl border-2 border-slate-200 focus:outline-none focus:border-indigo-400 transition-colors text-slate-900 placeholder-slate-400"
-      />
-      <button type="button" onClick={onToggle}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
-        <EyeIcon visible={showPw} />
-      </button>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
