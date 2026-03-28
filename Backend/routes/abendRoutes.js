@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const abendController = require('../controllers/abendController');
+const { authenticateToken } = require('../middleware/authMiddleware');
+
+router.use(authenticateToken);
 
 // GET /api/abend - Get abend logs with filters
 router.get('/', abendController.getAbendLogs);

@@ -127,10 +127,7 @@ const AddLogPage: React.FC = () => {
         alert('Log updated successfully!');
         navigate('/search', { state: { refreshSearch: true } });
       } else {
-        const newLogData = { ...logData };
-        if (!newLogData.entered_by) {
-          newLogData.entered_by = 'System User';
-        }
+        const { entered_by: _eb, ...newLogData } = logData;
         await api.addLog(newLogData as Omit<AbendLog, 'log_id' | 'log_number'>);
         alert('Log saved successfully!');
         navigate('/search', { state: { refreshSearch: true } });

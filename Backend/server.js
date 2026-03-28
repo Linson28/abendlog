@@ -2,12 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 require('dotenv').config();
 
-// require('jsonwebtoken'); 
+if (!process.env.JWT_SECRET) {
+  console.warn('WARNING: JWT_SECRET not set, using default. Set this in production.');
+}
 
-// const authRoutes = require('./routes/authRoutes');
-
+const authRoutes = require('./routes/authRoutes');
 const abendRoutes = require('./routes/abendRoutes');
 const { connectDB } = require('./config/database');
 
@@ -24,6 +26,16 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.'
 });
 app.use(limiter);
+
+// Security headers
+app.use(helmet());
+
+// Login-specific rate limiter - 10 requests per 15 minutes per IP
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: 'Too many login attempts.'
+});
 
 // //CORS configuration
 // const allowedOrigins = ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:8080'];
@@ -43,16 +55,17 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 //to server static files
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
+app.use(express.static(path.join(__dirname, '../Frontend/dist')));
 
 // Routes
-// app.use('/api/auth', authRoutes);
+app.use('/api/auth/login', loginLimiter);
+app.use('/api/auth', authRoutes);
 app.use('/api/abend', abendRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'OK', 
+  res.status(200).json({
+    status: 'OK',
     message: 'Abend Log Management API is running',
     timestamp: new Date().toISOString()
   });
@@ -67,8 +80,8 @@ app.get('/*path', (req, res) => {
       message: 'API route not found'
     });
   }
-  
-  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+
+  res.sendFile(path.join(__dirname, '../Frontend/dist/index.html'));
 });
 
 // Global error handler
@@ -94,7 +107,7 @@ async function startServer() {
   try {
     await connectDB();
     console.log('Database connected successfully');
-    
+
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
       console.log(`Health check: http://localhost:${PORT}/health`);

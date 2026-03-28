@@ -37,3 +37,30 @@ export interface PaginatedLogResponse {
   logs: AbendLog[];
   totalCount: number;
 }
+
+export enum UserRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+}
+
+export interface User {
+  user_id: string;
+  role: UserRole;
+  is_active: boolean;
+  must_reset_pw: boolean;
+  last_login_at: string | null;
+  display_name: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SessionData {
+  user_id: string;
+  role: UserRole;
+  login_mode: 'user' | 'admin';
+  login_at: string;
+  last_activity_at: string;
+  token: string;
+  display_name: string;
+  must_reset_pw: boolean;
+}
