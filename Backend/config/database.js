@@ -1,7 +1,7 @@
 const sql = require('mssql');
 
 const dbConfig = {
-  server: '10.238.3.8',
+  server: '10.238.3.11',
   database: 'Abend_tool',
   user: 'sa',
   password: 'zena',

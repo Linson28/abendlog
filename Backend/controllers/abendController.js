@@ -190,18 +190,19 @@ const createAbendLog = async (req, res, next) => {
         .query('SELECT ISNULL(MAX(log_number), 0) + 1 AS nextLogNumber FROM master_table WITH (UPDLOCK, HOLDLOCK) WHERE abend_year = @year');
     const newLogNumber = logNumResult.recordset[0].nextLogNumber;
 
+    // Server time is behind CT by 6 hours, so add 6 hours to get correct CT time
     const columns = ['log_number', 'entered_by', 'entered_time', 'entered_date', 'abend_year', 'abend_mmdd'];
     const values = [
       '@log_number',
       '@entered_by',
-      "CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central Standard Time' AS TIME)",
-      "CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central Standard Time' AS DATE)",
+      "CAST(DATEADD(HOUR, 6, GETDATE()) AS TIME)",
+      "CAST(DATEADD(HOUR, 6, GETDATE()) AS DATE)",
       '@abend_year',
       '@abend_mmdd'
     ];
 
     request.input('log_number', sql.Int, newLogNumber);
-    request.input('entered_by', sql.VarChar, req.user.userId); // Use authenticated user
+    request.input('entered_by', sql.VarChar, req.user.userId);
     request.input('abend_year', sql.Char(4), effectiveYear);
     request.input('abend_mmdd', sql.Char(4), effectiveMmdd);
 
@@ -246,7 +247,7 @@ const updateAbendLog = async (req, res, next) => {
     const request = pool.request()
       .input('year_param', sql.Char(4), year)
       .input('log_number_param', sql.Int, log_number)
-      .input('updated_by', sql.VarChar, req.user.userId); // Use authenticated user
+      .input('updated_by', sql.VarChar, req.user.userId);
 
     const setClauses = [];
 
@@ -276,12 +277,13 @@ const updateAbendLog = async (req, res, next) => {
         return res.status(400).json({ success: false, message: "No fields to update provided." });
     }
 
+    // Server time is behind CT by 6 hours, so add 6 hours to get correct CT time
     const result = await request.query(`
       UPDATE master_table
       SET ${setClauses.join(', ')},
-          updated_by = @updated_by,
-          updated_time = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central Standard Time' AS TIME),
-          updated_date = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central Standard Time' AS DATE)
+          updated_by   = @updated_by,
+          updated_time = CAST(DATEADD(HOUR, 6, GETDATE()) AS TIME),
+          updated_date = CAST(DATEADD(HOUR, 6, GETDATE()) AS DATE)
       OUTPUT INSERTED.*
       WHERE abend_year = @year_param AND log_number = @log_number_param
     `);

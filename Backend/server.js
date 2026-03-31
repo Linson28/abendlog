@@ -14,7 +14,7 @@ const abendRoutes = require('./routes/abendRoutes');
 const { connectDB } = require('./config/database');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 2828;
 
 
 // Rate limiting - 100 requests per 15 minutes per IP
