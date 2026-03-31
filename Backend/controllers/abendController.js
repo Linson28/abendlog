@@ -191,7 +191,14 @@ const createAbendLog = async (req, res, next) => {
     const newLogNumber = logNumResult.recordset[0].nextLogNumber;
 
     const columns = ['log_number', 'entered_by', 'entered_time', 'entered_date', 'abend_year', 'abend_mmdd'];
-    const values = ['@log_number', '@entered_by', 'CAST(GETDATE() AS TIME)', 'CAST(GETDATE() AS DATE)', '@abend_year', '@abend_mmdd'];
+    const values = [
+      '@log_number',
+      '@entered_by',
+      "CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central Standard Time' AS TIME)",
+      "CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central Standard Time' AS DATE)",
+      '@abend_year',
+      '@abend_mmdd'
+    ];
 
     request.input('log_number', sql.Int, newLogNumber);
     request.input('entered_by', sql.VarChar, req.user.userId); // Use authenticated user
@@ -241,7 +248,6 @@ const updateAbendLog = async (req, res, next) => {
       .input('log_number_param', sql.Int, log_number)
       .input('updated_by', sql.VarChar, req.user.userId); // Use authenticated user
 
-
     const setClauses = [];
 
     if (req.body.abend_date) {
@@ -271,7 +277,11 @@ const updateAbendLog = async (req, res, next) => {
     }
 
     const result = await request.query(`
-      UPDATE master_table SET ${setClauses.join(', ')}, updated_by = @updated_by, updated_time = CAST(GETDATE() AS TIME), updated_date = CAST(GETDATE() AS DATE)
+      UPDATE master_table
+      SET ${setClauses.join(', ')},
+          updated_by = @updated_by,
+          updated_time = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central Standard Time' AS TIME),
+          updated_date = CAST(GETDATE() AT TIME ZONE 'UTC' AT TIME ZONE 'Central Standard Time' AS DATE)
       OUTPUT INSERTED.*
       WHERE abend_year = @year_param AND log_number = @log_number_param
     `);
