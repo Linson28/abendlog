@@ -71,7 +71,7 @@ const LoginPage: React.FC = () => {
             </div>
             <div>
               <h1 className="text-3xl font-black text-white tracking-tight">Abend Log</h1>
-              <p className="text-white/70 text-sm font-medium">Log Management System</p>
+              
             </div>
           </div>
         </div>
@@ -174,12 +174,7 @@ const LoginPage: React.FC = () => {
             </button>
           </form>
 
-          {isAdmin && (
-            <p className="mt-4 text-center text-xs text-slate-400">
-              <i className="fa-solid fa-lock mr-1"></i>
-              Admin access requires elevated privileges
-            </p>
-          )}
+  
         </div>
       </div>
     </div>

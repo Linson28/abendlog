@@ -122,7 +122,7 @@ const AdminConsolePage: React.FC = () => {
             <i className="fa-solid fa-shield-halved text-white"></i>
           </div>
           <div>
-            <h1 className="text-lg font-black text-slate-900 tracking-tight">ADMIN OPS</h1>
+            <h1 className="text-lg font-black text-slate-900 tracking-tight">ADMIN DASHBOARD</h1>
             <p className="text-xs text-slate-500">Abend Log Management</p>
           </div>
         </div>
