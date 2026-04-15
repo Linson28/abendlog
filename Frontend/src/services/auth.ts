@@ -117,4 +117,13 @@ export const authService = {
     if (!response.ok) throw new Error(data.message || 'Failed to toggle user status.');
     return data;
   },
+
+  async deleteUser(userId: string): Promise<void> {
+    const response = await fetch(`/api/auth/users/${encodeURIComponent(userId)}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${this.getToken()}` },
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Failed to delete user.');
+  },
 };

@@ -249,11 +249,44 @@ const toggleUserActive = async (req, res, next) => {
   }
 };
 
+// DELETE /api/auth/users/:userId  (requires admin)
+const deleteUser = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const adminId = req.user.userId;
+
+    // Prevent admin from deleting their own account
+    if (userId === adminId) {
+      return res.status(400).json({ success: false, message: 'You cannot delete your own account.' });
+    }
+
+    const pool = getPool();
+
+    // Verify user exists
+    const existing = await pool.request()
+      .input('user_id', sql.NVarChar, userId)
+      .query('SELECT user_id FROM users WHERE user_id = @user_id');
+
+    if (existing.recordset.length === 0) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
+    await pool.request()
+      .input('user_id', sql.NVarChar, userId)
+      .query('DELETE FROM users WHERE user_id = @user_id');
+
+    return res.status(200).json({ success: true, message: 'User deleted successfully.' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   login,
   resetPassword,
   getUsers,
   createUser,
   forceResetUser,
-  toggleUserActive
+  toggleUserActive,
+  deleteUser,
 };

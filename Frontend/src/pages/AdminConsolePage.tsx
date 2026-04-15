@@ -87,16 +87,12 @@ const AdminConsolePage: React.FC = () => {
     }
   };
 
-  const handleToggleActive = async (user: User) => {
+  const handleDeleteUser = async (user: User) => {
+    if (!window.confirm(`Delete "${user.display_name || user.user_id}"? This cannot be undone.`)) return;
     try {
-      await authService.toggleUserActive(user.user_id);
-      // If admin disabled themselves, log out
-      if (user.user_id === session?.user_id && user.is_active) {
-        logout();
-        return;
-      }
+      await authService.deleteUser(user.user_id);
       await fetchUsers();
-      showToast(`${user.display_name || user.user_id} ${user.is_active ? 'disabled' : 'enabled'}.`);
+      showToast(`${user.display_name || user.user_id} has been deleted.`);
     } catch (err: unknown) {
       showToast(`Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
@@ -234,15 +230,11 @@ const AdminConsolePage: React.FC = () => {
                             Force Reset
                           </button>
                           <button
-                            onClick={() => handleToggleActive(user)}
+                            onClick={() => handleDeleteUser(user)}
                             disabled={user.user_id === session?.user_id}
-                            className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap ${
-                              user.is_active
-                                ? 'text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100'
-                                : 'text-green-600 hover:text-green-700 bg-green-50 hover:bg-green-100'
-                            }`}
+                            className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100"
                           >
-                            {user.is_active ? 'Disable' : 'Enable'}
+                            <i className="fa-solid fa-trash mr-1"></i> Delete
                           </button>
                         </div>
                       </td>
